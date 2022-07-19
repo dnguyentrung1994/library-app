@@ -20,5 +20,13 @@ namespace LibraryApi.Data{
 
     [Column("phone_number")]
     public string PhoneNumber {get; set;} = String.Empty;
+
+    [Column("is_staff")]
+    public bool IsStaff {get; set;} = false;
+
+    [Column("is_active")]
+    public bool IsActive {get; set;} = true;
+
+    public List<Book> Books {get; set;} = new List<Book>();
   }
 }

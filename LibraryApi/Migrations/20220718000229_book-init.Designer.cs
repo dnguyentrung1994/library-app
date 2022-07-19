@@ -3,6 +3,7 @@ using System;
 using LibraryApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LibraryApi.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    partial class LibraryContextModelSnapshot : ModelSnapshot
+    [Migration("20220718000229_book-init")]
+    partial class bookinit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,14 +37,14 @@ namespace LibraryApi.Migrations
                         .HasColumnType("date")
                         .HasColumnName("added_at");
 
-                    b.Property<DateOnly?>("DisposedAt")
-                        .HasColumnType("date")
-                        .HasColumnName("disposed_at");
-
                     b.Property<string>("Edition")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("edition");
+
+                    b.Property<DateOnly?>("ExposedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("exposed_at");
 
                     b.Property<string>("Title")
                         .IsRequired()
