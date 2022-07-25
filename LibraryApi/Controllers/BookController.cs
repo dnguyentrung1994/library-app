@@ -43,6 +43,29 @@ namespace LibraryApi.Controllers
             return books;
         }
 
+        // GET: api/Book/Borrowed
+        [HttpGet("Borrowed")]
+        public async Task<ActionResult<IEnumerable<BriefBookDTO>>> GetBorrowedBook()
+        {
+            if (_context.Book == null)
+            {
+              return NotFound();
+            }
+            List<BriefBookDTO> books = await _context.Book
+                        .Include(books=>books.User)
+                        .Where(book=>book.UserId!=null)
+                        .Select(book=>new DTO.BriefBookDTO{
+                            Title = book.Title,
+                            BorrowerId = book.UserId,
+                            BorrowerFirstName = book.User != null ? (book.User.FirstName ?? "") : null,
+                            BorrowerLastName = book.User != null ? (book.User.LastName ?? "") : null
+                        }
+                        )
+                        .ToListAsync();
+
+            return books;
+        }
+
         // GET: api/Book/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(long id)
