@@ -32,10 +32,10 @@ namespace LibraryApi.Controllers
             List<BriefBookDTO> books = await _context.Book
                         .Include(books=>books.User)
                         .Select(book=>new DTO.BriefBookDTO{
-                            Title=book.Title,
-                            BorrowerId=book.UserId,
-                            BorrowerFirstName=book.User.FirstName ?? null,
-                            BorrowerLastName=book.User.LastName ?? null
+                            Title = book.Title,
+                            BorrowerId = book.UserId,
+                            BorrowerFirstName = book.User != null ? (book.User.FirstName ?? "") : null,
+                            BorrowerLastName = book.User != null ? (book.User.LastName ?? "") : null
                         }
                         )
                         .ToListAsync();
