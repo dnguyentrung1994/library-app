@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApi.Data;
+using LibraryApi.DTO;
 
 namespace LibraryApi.Controllers
 {
@@ -22,13 +23,24 @@ namespace LibraryApi.Controllers
 
         // GET: api/Book
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBook()
+        public async Task<ActionResult<IEnumerable<BriefBookDTO>>> GetBook()
         {
           if (_context.Book == null)
           {
               return NotFound();
           }
-            return await _context.Book.ToListAsync();
+            List<BriefBookDTO> books = await _context.Book
+                        .Include(books=>books.User)
+                        .Select(book=>new DTO.BriefBookDTO{
+                            Title=book.Title,
+                            BorrowerId=book.UserId,
+                            BorrowerFirstName=book.User.FirstName ?? null,
+                            BorrowerLastName=book.User.LastName ?? null
+                        }
+                        )
+                        .ToListAsync();
+
+            return books;
         }
 
         // GET: api/Book/5
@@ -39,7 +51,9 @@ namespace LibraryApi.Controllers
           {
               return NotFound();
           }
-            var book = await _context.Book.FindAsync(id);
+            var book = await _context.Book
+                            .Include(b=>b.User)
+                            .FirstOrDefaultAsync(b=>b.Id == id);
 
             if (book == null)
             {

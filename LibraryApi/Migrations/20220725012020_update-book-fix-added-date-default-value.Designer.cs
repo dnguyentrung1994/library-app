@@ -3,6 +3,7 @@ using System;
 using LibraryApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LibraryApi.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    partial class LibraryContextModelSnapshot : ModelSnapshot
+    [Migration("20220725012020_update-book-fix-added-date-default-value")]
+    partial class updatebookfixaddeddatedefaultvalue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,16 +33,16 @@ namespace LibraryApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly>("AddedAt")
+                        .HasColumnType("date")
                         .HasColumnName("added_at");
 
-                    b.Property<DateTime?>("BorrowedAt")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("BorrowedAt")
+                        .HasColumnType("date")
                         .HasColumnName("borrowed_at");
 
-                    b.Property<DateTime?>("DisposedAt")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("DisposedAt")
+                        .HasColumnType("date")
                         .HasColumnName("disposed_at");
 
                     b.Property<string>("Edition")
