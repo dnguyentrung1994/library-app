@@ -11,9 +11,9 @@ namespace LibraryApi.Data{
     [Required]
     [Column("first_name")]
     public string FirstName {get; set;} = String.Empty;
-    [Required]
+
     [Column("last_name")]
-    public string LastName {get; set;} = String.Empty;
+    public string? LastName {get; set;} 
 
     [Column("address")]
     public string Address {get; set;} = String.Empty;

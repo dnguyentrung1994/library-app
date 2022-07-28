@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NpgsqlTypes;
 
 namespace LibraryApi.Data
 {
@@ -29,26 +30,8 @@ namespace LibraryApi.Data
     [Column("borrowed_at")]
     public DateTime? BorrowedAt {get; set;}
 
+    public NpgsqlTsVector SearchVector { get; set; }
+
     public User? User {get; set;}
-  }
-}
-
-namespace LibraryApi.DTO
-{
-  [Serializable]
-  public class BriefBookDTO
-  {
-    public string Title {set; get;} = String.Empty;
-    public long? BorrowerId {get; set;}
-    public string? BorrowerFirstName {get;set;}
-    public string? BorrowerLastName {get;set;}
-  }
-
-  [Serializable]
-  public class BookDTO
-  {
-    public string Title {set; get;} = String.Empty;
-    public string Edition {get; set;} = String.Empty;
-    public DateOnly AddedAt {get; set;}
   }
 }
