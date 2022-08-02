@@ -18,6 +18,8 @@ namespace LibraryApi.DTO
 
     public bool IsActive {get; set;} = true;
 
+    public bool CanBorrow {get; set;} = true;
+
     public List<InnerBookDTO> Books {get; set;} = new List<InnerBookDTO>();
   }
 

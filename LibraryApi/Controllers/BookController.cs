@@ -29,8 +29,8 @@ namespace LibraryApi.Controllers
         
         // GET: api/Book
         [HttpGet]
-        [SwaggerOperation("Gets all existing books")]
-        [SwaggerResponse(StatusCodes.Status200OK, Description = "Returns list of all existing books", Type =typeof(BookWithUserDTO))]
+        [SwaggerOperation("Gets all books")]
+        [SwaggerResponse(StatusCodes.Status200OK, Description = "Returns list of all books", Type =typeof(BookWithUserDTO))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "This happens only when the book table does not exist in the current database")]
         public async Task<ActionResult<IEnumerable<BookWithUserDTO>>> GetBook()
         {
@@ -45,6 +45,28 @@ namespace LibraryApi.Controllers
                 .Map<List<Book>, List<BookWithUserDTO>>(books);
             return result;
         }
+
+
+        // GET: api/Book/Current
+        [HttpGet("Current")]
+        [SwaggerOperation("Gets all existing books")]
+        [SwaggerResponse(StatusCodes.Status200OK, Description = "Returns list of all existing books", Type =typeof(BookWithUserDTO))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Description = "This happens only when the book table does not exist in the current database")]
+        public async Task<ActionResult<IEnumerable<BookWithUserDTO>>> GetCurrentBooks()
+        {
+            if (_context.Book == null)
+          {
+              return NotFound();
+          }
+            List<Book> books = await _context.Book
+                        .Include(books=>books.User)
+                        .Where(book=>book.DisposedAt == null)
+                        .ToListAsync();
+            List<BookWithUserDTO> result = _mapper
+                .Map<List<Book>, List<BookWithUserDTO>>(books);
+            return result;
+        }
+
 
         // GET: api/Book/Borrowed
         [HttpGet("Borrowed")]
@@ -96,6 +118,13 @@ namespace LibraryApi.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Full-text search for book(s) title 
+        /// </summary>
+        /// <param name="name">search phrase</param>
+        /// <returns>List of book(s) containing search term</returns>
+        /// <response code="200">List of book(s) containing search term</response>
+        /// <response code="404">When the table "books" is not found</response>
         // GET: api/Book/name/foo
         [HttpGet("name/{name}")]
         public async Task<ActionResult<IEnumerable<BookWithUserDTO>>> GetBookByName(string name)

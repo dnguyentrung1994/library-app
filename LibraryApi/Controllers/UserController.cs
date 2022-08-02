@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApi.Data;
+using LibraryApi.DTO;
+using AutoMapper;
 
 namespace LibraryApi.Controllers
 {
@@ -15,38 +17,91 @@ namespace LibraryApi.Controllers
     {
         private readonly LibraryContext _context;
 
-        public UserController(LibraryContext context)
+        private readonly IMapper _mapper;
+
+
+        public UserController(LibraryContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns>List of all users</returns>
+        /// <response code="200">List of all users</response>
+        /// <response code="404">In case the "user" table is not found in database</response>
         // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserWithBookDTO>>> GetUsers()
         {
           if (_context.Users == null)
           {
               return NotFound();
           }
-            return await _context.Users.ToListAsync();
+            List<User> users = await _context.Users
+                    .Include(u=>u.Books)
+                    .ToListAsync();
+
+            List<UserWithBookDTO> result = _mapper.Map<List<User>, List<UserWithBookDTO>>(users);
+
+            return result;
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(long id)
+        /// <summary>
+        /// Get all currently active users
+        /// </summary>
+        /// <returns>List of all users</returns>
+        /// <response code="200">List of all active users</response>
+        /// <response code="404">In case the "user" table is not found in database</response>
+        // GET: api/User
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<UserWithBookDTO>>> GetActiveUsers()
         {
           if (_context.Users == null)
           {
               return NotFound();
           }
-            var user = await _context.Users.FindAsync(id);
+            List<User> users = await _context.Users
+                    .Include(u=>u.Books)
+                    .Where(u=>u.IsActive == true)
+                    .ToListAsync();
+
+            List<UserWithBookDTO> result = _mapper.Map<List<User>, List<UserWithBookDTO>>(users);
+
+            return result;
+        }
+        /// <summary>
+        /// Get specific user by ID
+        /// </summary>
+        /// <param name="id">the id of the user</param>
+        /// <returns>User info</returns>
+        /// <response code="200">Returns requested user</response>
+        /// <response code="404">Either the table user doesn't exist, or requested user id doesn't exists</response>
+        // GET: api/User/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserWithBookDTO>> GetUser(long id)
+        {
+          if (_context.Users == null)
+          {
+              return NotFound();
+          }
+            var user = await _context.Users
+                    .Include(u=>u.Books)
+                    .Where(u=>u.Id == id)
+                    .FirstOrDefaultAsync();
 
             if (user == null)
             {
                 return NotFound();
+            }   else 
+            {
+                UserWithBookDTO result = _mapper.Map<User, UserWithBookDTO>(user);
+                return result;
             }
 
-            return user;
+
         }
 
         // PUT: api/User/5
