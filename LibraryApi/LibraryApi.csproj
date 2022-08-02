@@ -25,4 +25,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="LibraryApiTests" />
+  </ItemGroup>
+
 </Project>
